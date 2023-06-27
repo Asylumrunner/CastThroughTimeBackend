@@ -1,6 +1,6 @@
 from flask import Flask
-from get_sets import download_sets
 from os.path import isfile
+from os import environ
 import requests
 import csv
 
@@ -13,9 +13,12 @@ def health_check():
 @app.route("/sets", methods=['GET'])
 def get_sets():
     try:
-        r = requests.get('https://api.scryfall.com/sets').json()
-        trimmed_sets = {set["code"]: { "name": set["name"], "img_url": set['icon_svg_uri'], "date": set["released_at"]} for set in r['data'] if (set['set_type'] in ['core', 'expansion'])}
-        return trimmed_sets
+        if environ.get("ctt_runtime_evenronment", "NOT_PROVIDED") == "DEV":
+            r = requests.get('https://api.scryfall.com/sets').json()
+            trimmed_sets = {set["code"]: { "name": set["name"], "img_url": set['icon_svg_uri'], "date": set["released_at"]} for set in r['data'] if (set['set_type'] in ['core', 'expansion'])}
+            return trimmed_sets
+        else:
+
     
     except Exception as e:
         err_resp = ("An error occured when trying to get set data: " + str(e), 500)
