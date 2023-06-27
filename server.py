@@ -1,7 +1,8 @@
 from flask import Flask
 from get_sets import download_sets
-from os.path import exists
-import json
+from os.path import isfile
+import requests
+import csv
 
 app = Flask(__name__)
 
@@ -11,21 +12,25 @@ def health_check():
 
 @app.route("/sets", methods=['GET'])
 def get_sets():
-    file_exists = exists("/data/set-data.json")
-    print(file_exists)
-        
-    if not file_exists:
-        print("AAAAAAAAA")
-        download_sets()
-
-    with open('./data/set-data.json', 'r') as set_file:
-        data = json.load(set_file)
-        return data
+    try:
+        r = requests.get('https://api.scryfall.com/sets').json()
+        trimmed_sets = {set["code"]: { "name": set["name"], "img_url": set['icon_svg_uri'], "date": set["released_at"]} for set in r['data'] if (set['set_type'] in ['core', 'expansion'])}
+        return trimmed_sets
+    
+    except Exception as e:
+        err_resp = ("An error occured when trying to get set data: " + str(e), 500)
+        return err_resp
 
 @app.route("/cards", methods=['GET'])
-def get_cards():
-    return "TODO: gets the information cards, downloading the file if not available"
-
-@app.route("/refresh", methods=['POST'])
-def refresh_data():
-    return "TODO: generate the set_data data structure and download the information card file"
+def get_cards(): 
+    try:
+        cards = []
+        with open("./data/card_data.csv", 'r') as data_file:
+            csvreader = csv.DictReader(data_file)
+            for row in csvreader:
+                cards.append(row)
+        return cards
+    
+    except Exception as e:
+        err_resp = ("An error occured when trying to get card data: " + str(e), 500)
+        return err_resp

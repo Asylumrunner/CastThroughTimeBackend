@@ -1,0 +1,10 @@
+{
+    "prod": {
+        "app_function": "server.app",
+        "profile_name": "default",
+        "project_name": "castthroughtime",
+        "runtime": "python3.10",
+        "s3_bucket": "zappa-castthroughtime",
+        "aws_region": "us-west-1"
+    }
+}
