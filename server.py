@@ -1,8 +1,6 @@
 from flask import Flask
-from os.path import isfile
-from os import environ
-import requests
-import csv
+from get_sets import download_sets_from_s3
+from get_cards import read_cards_file
 
 app = Flask(__name__)
 
@@ -13,12 +11,7 @@ def health_check():
 @app.route("/sets", methods=['GET'])
 def get_sets():
     try:
-        if environ.get("ctt_runtime_evenronment", "NOT_PROVIDED") == "DEV":
-            r = requests.get('https://api.scryfall.com/sets').json()
-            trimmed_sets = {set["code"]: { "name": set["name"], "img_url": set['icon_svg_uri'], "date": set["released_at"]} for set in r['data'] if (set['set_type'] in ['core', 'expansion'])}
-            return trimmed_sets
-        else:
-
+        return download_sets_from_s3()
     
     except Exception as e:
         err_resp = ("An error occured when trying to get set data: " + str(e), 500)
@@ -27,12 +20,7 @@ def get_sets():
 @app.route("/cards", methods=['GET'])
 def get_cards(): 
     try:
-        cards = []
-        with open("./data/card_data.csv", 'r') as data_file:
-            csvreader = csv.DictReader(data_file)
-            for row in csvreader:
-                cards.append(row)
-        return cards
+        return read_cards_file()
     
     except Exception as e:
         err_resp = ("An error occured when trying to get card data: " + str(e), 500)
