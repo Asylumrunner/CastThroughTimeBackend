@@ -10,12 +10,12 @@ def health_check():
 
 @app.route("/sets", methods=['GET'])
 def get_sets():
-    try:
-        return download_sets_from_s3()
+    #try:
+    return download_sets_from_s3()
     
-    except Exception as e:
-        err_resp = ("An error occured when trying to get set data: " + str(e), 500)
-        return err_resp
+    #except Exception as e:
+    #    err_resp = ("An error occured when trying to get set data: " + str(e), 500)
+    #    return err_resp
 
 @app.route("/cards", methods=['GET'])
 def get_cards(): 
