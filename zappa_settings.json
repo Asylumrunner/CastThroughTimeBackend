@@ -5,6 +5,7 @@
         "project_name": "castthroughtime",
         "runtime": "python3.10",
         "s3_bucket": "zappa-castthroughtime",
-        "aws_region": "us-west-1"
+        "aws_region": "us-west-1",
+        "cors": true
     }
 }
