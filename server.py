@@ -1,8 +1,10 @@
 from flask import Flask
+from flask_cors import CORS
 from get_sets import download_sets_from_s3
 from get_cards import read_cards_file
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route("/")
 def health_check():
