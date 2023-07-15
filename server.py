@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_cors import CORS
-from get_sets import download_sets_from_s3
+from get_sets import download_sets_from_s3, download_sets_from_scryfall
 from get_cards import read_cards_file
 
 app = Flask(__name__)
@@ -27,3 +27,7 @@ def get_cards():
     except Exception as e:
         err_resp = ("An error occured when trying to get card data: " + str(e), 500)
         return err_resp
+    
+@app.route("/update", methods=['GET'])
+def update_s3():
+    return download_sets_from_scryfall()
