@@ -31,3 +31,6 @@ def get_cards():
 @app.route("/update", methods=['GET'])
 def update_s3():
     return download_sets_from_scryfall()
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0',debug=True)
